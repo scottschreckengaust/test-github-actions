@@ -26,7 +26,7 @@ jobs:
       - name: windows
         if: ${{ startsWith(matrix.os, 'windows-') }}
         run: |
-          echo %NUMBER_OF_PROCESSORS%
+          echo $env:NUMBER_OF_PROCESSORS
       - name: ubuntu
         if: ${{ startsWith(matrix.os, 'ubuntu-') }}
         run: |
