@@ -1,38 +1,54 @@
 name: main
-
 on:
   workflow_dispatch
-
 jobs:
-  main:
-    name: main
+  cpu:
+    name: cpu
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os:
-          - windows-latest
-          - windows-2019
-          - windows-2022
-          - ubuntu-latest
-          - ubuntu-20.04
-          - ubuntu-22.04
-          - ubuntu-24.04
-          - macos-latest
-          - macos-12
-          - macos-13
-          - macos-14
+          - 'windows-latest'
+          - 'windows-2019'
+          - 'windows-2022'
+          - 'ubuntu-latest'
+          - 'ubuntu-20.04'
+          - 'ubuntu-22.04'
+          - 'ubuntu-24.04'
+          - 'macos-latest'
+          - 'macos-12'
+          - 'macos-13'
+          - 'macos-14'
+        node-version:
+          - '22'
+          - '20'
+          - '18'
+          - '16'
+          - '14'
+        exclude:
+          - node-version: '14'
+            os: 'macos-latest'
+          - node-version: '14'
+            os: 'macos-14'
     steps:
-      - name: windows
-        if: ${{ startsWith(matrix.os, 'windows-') }}
+      # - name: windows
+      #   if: ${{ startsWith(matrix.os, 'windows-') }}
+      #   run: |
+      #     echo NUMBER_OF_PROCESSORS=$env:NUMBER_OF_PROCESSORS >> "$GITHUB_OUTPUT"
+      # - name: ubuntu
+      #   if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+      #   run: |
+      #     echo NUMBER_OF_PROCESSORS=`nproc` >> "$GITHUB_OUTPUT"
+      # - name: macos
+      #   if: ${{ startsWith(matrix.os, 'macos-') }}
+      #   run: |
+      #     echo NUMBER_OF_PROCESSORS=`sysctl -n hw.activecpu` >> "$GITHUB_OUTPUT"
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: report number of processors
         run: |
-          echo $env:NUMBER_OF_PROCESSORS
-      - name: ubuntu
-        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
-        run: |
-          nproc
-      - name: macos
-        if: ${{ startsWith(matrix.os, 'macos-') }}
-        run: |
-          sysctl -n hw.activecpu
-    
+          node -e 'console.log(require("os").cpus().length)'
+  
