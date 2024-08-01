@@ -1,0 +1,38 @@
+name: main
+
+on:
+  workflow_dispatch
+
+jobs:
+  main:
+    name: main
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - windows-latest
+          - windows-2019
+          - windows-2022
+          - ubuntu-latest
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - macos-latest
+          - macos-12
+          - macos-13
+          - macos-14
+    steps:
+      - name: windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: |
+          echo %NUMBER_OF_PROCESSORS%
+      - name: ubuntu
+        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+        run: |
+          nproc
+      - name: macos
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        run: |
+          sysctl -n hw.activecpu
+    
