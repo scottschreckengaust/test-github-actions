@@ -1,4 +1,4 @@
-name: scancode
+name: opensource
 on:
   workflow_dispatch
 
