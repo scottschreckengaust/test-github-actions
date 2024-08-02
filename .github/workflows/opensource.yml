@@ -43,7 +43,7 @@ jobs:
             report.csv
             report.html
             report_files/
-
+          if-no-files-found: 'error'
   repolinter:
     runs-on: 'ubuntu-latest'
     name: 'repolinter'
@@ -56,10 +56,12 @@ jobs:
           node-version: '20.x'
       - name: 'Run Repolinter'
         run: |
-          npx repolinter > repolinter.txt
+          npx repolinter > repolinter.txt || (echo "repolinter exit $?" && cat repolinter.txt && exit 1)
       - name: 'Store Repolinter Output'
         uses: actions/upload-artifact@v4
+        if: ${{ always() }
         with:
           name: 'Repolinter Output'
           path: |
             repolinter.txt   
+          if-no-files-found: 'error'
