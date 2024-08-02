@@ -61,5 +61,6 @@ jobs:
           report.json
           report.csv
           report.html
+          report_files/
         
                 
