@@ -52,15 +52,15 @@ jobs:
       run: |
         cd scancode-toolkit
         ./configure
-        # source venv/bin/activate
-        # scancode ${{ github.workspace }}/workspace
+        source venv/bin/activate
+        scancode ${{ github.workspace }}/main
     - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
       if: ${{ startsWith(matrix.os, 'windows-') }}
       run: |
         cd scancode-toolkit
         configure
-        # venv\Scripts\activate
-        # scancode ${{ github.workspace }}\workspace
+        venv\Scripts\activate
+        scancode ${{ github.workspace }}\main
         
         
                 
