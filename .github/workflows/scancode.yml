@@ -53,14 +53,16 @@ jobs:
         cd scancode-toolkit
         ./configure
         source venv/bin/activate
-        scancode ${{ github.workspace }}/main
+        echo ${{ github.workspace }}/main
+        scancode -clpeui -n 2 ${{ github.workspace }}/main
     - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
       if: ${{ startsWith(matrix.os, 'windows-') }}
       run: |
         cd scancode-toolkit
         configure
         venv\Scripts\activate
-        scancode ${{ github.workspace }}\main
+        echo ${{ github.workspace }}\main
+        scancode -clpeui -n 2 ${{ github.workspace }}\main
         
         
                 
