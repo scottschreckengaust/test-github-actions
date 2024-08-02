@@ -40,7 +40,7 @@ jobs:
     #   run: |
     #     echo $NUMBER_OF_PROCESSORS
 
-    - name: Checkout
+    - name: Checkout ScanCode
       uses: actions/checkout@v4
       with:
         repository: 'nexB/scancode-toolkit.git'
