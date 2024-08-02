@@ -45,21 +45,21 @@ jobs:
             report_files/
 
   repolinter:
-    runs-on: ubuntu-latest
-    name: repolinter
+    runs-on: 'ubuntu-latest'
+    name: 'repolinter'
     steps:
       - name: 'Checkout'
         uses: 'actions/checkout@v4'
       - name: 'Setup Python'
-        uses: actions/setup-node@v5
+        uses: 'actions/setup-node@v4'
         with:
           node-version: '20.x'
       - name: 'Run Repolinter'
         run: |
           npx repolinter > repolinter.txt
-      - name: Store Repolinter Output
+      - name: 'Store Repolinter Output'
         uses: actions/upload-artifact@v4
         with:
-          name: Repolinter Output
+          name: 'Repolinter Output'
           path: |
             repolinter.txt   
