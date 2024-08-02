@@ -3,8 +3,8 @@ on:
   workflow_dispatch
 
 jobs:
-  test:
-    name: Python ${{ matrix.python_version }} and ${{ matrix.os }}
+  scancode:
+    name: ScanCode Python ${{ matrix.python_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -33,21 +33,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python_version }}
-    - name: Number of Processor
-      run: |
-        python -c 'import multiprocessing; print(f"NUMBER_OF_PROCESSORS={multiprocessing.cpu_count()}")' >> "$GITHUB_OUTPUT"
-
-    # - name: Windows ${{ runner.os }}
-    #   if: ${{ startsWith(matrix.os, 'windows-') }}
-    #   run: |
-    #     echo $env:NUMBER_OF_PROCESSORS
-    # - name: Not-Windows ${{ runner.os }}
-    #   if: ${{ ! startsWith(matrix.os, 'windows-') }}
-    #   run: |
-    #     echo $NUMBER_OF_PROCESSORS
-
-
-    - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
+    - name: Build and run ScanCode ${{ matrix.os }}
       if: ${{ ! startsWith(matrix.os, 'windows-') }}
       run: |
         cd scancode-toolkit
@@ -55,15 +41,20 @@ jobs:
         source venv/bin/activate
         echo ${{ github.workspace }}/main
         scancode --help
-        scancode -clpeui -n 2  --json-pp main.json ${{ github.workspace }}/main
-    - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
+        scancode -clpeui -n `python -c 'import multiprocessing; print(multiprocessing.cpu_count())'` --verbose --json-pp scancode.json ${{ github.workspace }}/main
+    - name: Build and run ScanCode ${{ matrix.os }}
       if: ${{ startsWith(matrix.os, 'windows-') }}
       run: |
         cd scancode-toolkit
         configure
         venv\Scripts\activate
         echo ${{ github.workspace }}\main
-        scancode -clpeui -n 2  --json-pp main.json ${{ github.workspace }}\main
-        
+        scancode -clpeui -n $env:NUMBER_OF_PROCESSORS --json-pp scancode.json ${{ github.workspace }}\main
+    - name: Store ScanCode Output
+      uses: actions/upload-artifact@v4
+      with:
+        name: scancode.json
+        path: |
+          scancode.json       
         
                 
