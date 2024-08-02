@@ -40,8 +40,9 @@ jobs:
         ./configure
         source venv/bin/activate
         echo ${{ github.workspace }}/main
-        scancode --help
-        scancode -clpeui -n `python -c 'import multiprocessing; print(multiprocessing.cpu_count())'` --verbose --json-pp scancode.json ${{ github.workspace }}/main
+        extractcode --verbose ${{ github.workspace }}/main
+        scancode -clpeui -n `python -c 'import multiprocessing; print(multiprocessing.cpu_count())'` --verbose --json-pp ${{ github.workspace }}/report.json --csv ${{ github.workspace }}/report.csv ${{ github.workspace }}/main
+        scancode --from-json ${{ github.workspace }}/report.json --html-app ${{ github.workspace }}/report.html
     - name: Build and run ScanCode ${{ matrix.os }}
       if: ${{ startsWith(matrix.os, 'windows-') }}
       run: |
@@ -49,12 +50,16 @@ jobs:
         configure
         venv\Scripts\activate
         echo ${{ github.workspace }}\main
-        scancode -clpeui -n $env:NUMBER_OF_PROCESSORS --json-pp scancode.json ${{ github.workspace }}\main
+        extractcode --verbose ${{ github.workspace }}\main
+        scancode -clpeui -n $env:NUMBER_OF_PROCESSORS --verbose --json-pp ${{ github.workspace }}\report.json --csv ${{ github.workspace }}\report.csv ${{ github.workspace }}\main
+        scancode --from-json ${{ github.workspace }}\report.json --html-app ${{ github.workspace }}\report.html
     - name: Store ScanCode Output
       uses: actions/upload-artifact@v4
       with:
-        name: scancode.json
+        name: ScanCode Output
         path: |
-          scancode.json       
+          report.json
+          report.csv
+          report.html
         
                 
