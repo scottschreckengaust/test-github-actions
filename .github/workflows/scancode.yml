@@ -33,7 +33,7 @@ jobs:
         # https://github.com/nexB/scancode-workbench
         # Below is deprecated and reference fix for visualizing
         scancode --from-json ${{ github.workspace }}/report.json --html-app ${{ github.workspace }}/report.html
-        sed -i -e "s|${{ github.workspace }}/report|./report|g" report.html
+        sed -i -e "s|${{ github.workspace }}/report|./report|g" ${{ github.workspace }}/report.html
     - name: Store ScanCode Output
       uses: actions/upload-artifact@v4
       with:
