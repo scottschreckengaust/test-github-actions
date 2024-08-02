@@ -19,10 +19,15 @@ jobs:
           # - 'windows-latest'
           # - 'macos-latest'
     steps:
-    - name: Checkout
+    - name: Checkout Repository
       uses: actions/checkout@v4
       with:
-        path: 'workspace'
+        path: 'main'
+    - name: Checkout ScanCode
+      uses: actions/checkout@v4
+      with:
+        repository: 'nexB/scancode-toolkit'
+        path: 'scancode-toolkit'
     - name: Use Python ${{ matrix.python_version }}
       uses: actions/setup-python@v5
       with:
@@ -40,11 +45,7 @@ jobs:
     #   run: |
     #     echo $NUMBER_OF_PROCESSORS
 
-    - name: Checkout ScanCode
-      uses: actions/checkout@v4
-      with:
-        repository: 'nexB/scancode-toolkit.git'
-        path: 'scancode-toolkit'
+
     - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
       if: ${{ ! startsWith(matrix.os, 'windows-') }}
       run: |
