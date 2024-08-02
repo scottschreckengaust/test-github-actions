@@ -4,37 +4,24 @@ on:
 
 jobs:
   scancode:
-    name: ScanCode Python ${{ matrix.python_version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        python_version:
-          # - '3.8'
-          # - '3.9'
-          # - '3.10'
-          # - '3.11'
-          - '3.12'
-        os:
-          - 'ubuntu-latest'
-          # - 'windows-latest'
-          # - 'macos-latest'
+    runs-on: 'ubuntu-latest'
+    name: 'ScanCode'
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    - name: 'Checkout'
+      uses: 'actions/checkout@v4'
       with:
         path: 'main'
-    - name: Checkout ScanCode
-      uses: actions/checkout@v4
+    - name: 'Checkout ScanCode'
+      uses: 'actions/checkout@v4'
       with:
         repository: 'nexB/scancode-toolkit'
         path: 'scancode-toolkit'
         ref: 'v32.2.1'
-    - name: Use Python ${{ matrix.python_version }}
+    - name: 'Setup Python'
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python_version }}
-    - name: Build and run ScanCode ${{ matrix.os }}
-      if: ${{ ! startsWith(matrix.os, 'windows-') }}
+        python-version: '3.12'
+    - name: 'Build and ScanCode'
       run: |
         cd scancode-toolkit
         ./configure
@@ -42,17 +29,11 @@ jobs:
         echo ${{ github.workspace }}/main
         extractcode --verbose ${{ github.workspace }}/main
         scancode -clpeui -n `python -c 'import multiprocessing; print(multiprocessing.cpu_count())'` --verbose --json-pp ${{ github.workspace }}/report.json --csv ${{ github.workspace }}/report.csv ${{ github.workspace }}/main
+        # ScanCode Workbench is recommended for reporting
+        # https://github.com/nexB/scancode-workbench
+        # Below is deprecated and reference fix for visualizing
         scancode --from-json ${{ github.workspace }}/report.json --html-app ${{ github.workspace }}/report.html
-    - name: Build and run ScanCode ${{ matrix.os }}
-      if: ${{ startsWith(matrix.os, 'windows-') }}
-      run: |
-        cd scancode-toolkit
-        configure
-        venv\Scripts\activate
-        echo ${{ github.workspace }}\main
-        extractcode --verbose ${{ github.workspace }}\main
-        scancode -clpeui -n $env:NUMBER_OF_PROCESSORS --verbose --json-pp ${{ github.workspace }}\report.json --csv ${{ github.workspace }}\report.csv ${{ github.workspace }}\main
-        scancode --from-json ${{ github.workspace }}\report.json --html-app ${{ github.workspace }}\report.html
+        sed -i -e "s|${{ github.workspace }}/report|./report|g" report.html
     - name: Store ScanCode Output
       uses: actions/upload-artifact@v4
       with:
@@ -62,5 +43,3 @@ jobs:
           report.csv
           report.html
           report_files/
-        
-                
