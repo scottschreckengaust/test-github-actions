@@ -59,7 +59,7 @@ jobs:
           npx repolinter > repolinter.txt || (echo "repolinter exit $?" && cat repolinter.txt && exit 1)
       - name: 'Store Repolinter Output'
         uses: actions/upload-artifact@v4
-        if: ${{ always() }
+        if: ${{ always() }}
         with:
           name: 'Repolinter Output'
           path: |
