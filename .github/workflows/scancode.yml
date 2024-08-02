@@ -8,11 +8,21 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python_version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        python_version:
+          # - '3.8'
+          # - '3.9'
+          # - '3.10'
+          # - '3.11'
+          - '3.12'
+        os:
+          - 'ubuntu-latest'
+          # - 'windows-latest'
+          # - 'macos-latest'
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        path: 'workspace'
     - name: Use Python ${{ matrix.python_version }}
       uses: actions/setup-python@v5
       with:
@@ -20,12 +30,35 @@ jobs:
     - name: Number of Processor
       run: |
         python -c 'import multiprocessing; print(f"NUMBER_OF_PROCESSORS={multiprocessing.cpu_count()}")' >> "$GITHUB_OUTPUT"
-    - name: Windows ${{ runner.os }}
-      if: ${{ startsWith(matrix.os, 'windows-') }}
-      run: |
-        echo $env:NUMBER_OF_PROCESSORS
-    - name: Not-Windows ${{ runner.os }}
+
+    # - name: Windows ${{ runner.os }}
+    #   if: ${{ startsWith(matrix.os, 'windows-') }}
+    #   run: |
+    #     echo $env:NUMBER_OF_PROCESSORS
+    # - name: Not-Windows ${{ runner.os }}
+    #   if: ${{ ! startsWith(matrix.os, 'windows-') }}
+    #   run: |
+    #     echo $NUMBER_OF_PROCESSORS
+
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        repository: 'nexB/scancode-toolkit.git'
+        path: 'scancode-toolkit'
+    - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
       if: ${{ ! startsWith(matrix.os, 'windows-') }}
       run: |
-        echo $NUMBER_OF_PROCESSORS
+        cd scancode-toolkit
+        ./configure
+        source venv/bin/activate
+        scancode ${{ github.workspace }}/workspace
+    - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
+      if: ${{ startsWith(matrix.os, 'windows-') }}
+      run: |
+        cd scancode-toolkit
+        configure
+        venv\Scripts\activate
+        scancode ${{ github.workspace }}\workspace
+        
+        
                 
