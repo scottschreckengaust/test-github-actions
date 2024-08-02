@@ -1,0 +1,16 @@
+name: scancode-direct
+on:
+  workflow_dispatch
+
+jobs:
+  scancode:
+    runs-on: 'ubuntu-latest'
+    name: 'ScanCode'
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        path: scancode-inputs
+    - uses: nexB/scancode-action@alpha
+      with:
+        pipelines: 'scan_codebase'
+        output-formats: 'json xlsx spdx cyclonedx'
