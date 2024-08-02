@@ -4,7 +4,7 @@ on:
 
 jobs:
   test:
-    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Python ${{ matrix.python_version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -54,7 +54,8 @@ jobs:
         ./configure
         source venv/bin/activate
         echo ${{ github.workspace }}/main
-        scancode -clpeui -n 2 ${{ github.workspace }}/main
+        scancode --help
+        scancode -clpeui -n 2  --json-pp main.json ${{ github.workspace }}/main
     - name: Build and run ScanCode ${{ runner.os }} with ${{ env.NUMBER_OF_PROCESSORS }}
       if: ${{ startsWith(matrix.os, 'windows-') }}
       run: |
@@ -62,7 +63,7 @@ jobs:
         configure
         venv\Scripts\activate
         echo ${{ github.workspace }}\main
-        scancode -clpeui -n 2 ${{ github.workspace }}\main
+        scancode -clpeui -n 2  --json-pp main.json ${{ github.workspace }}\main
         
         
                 
