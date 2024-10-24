@@ -20,7 +20,9 @@ jobs:
           - 'macos-12'
           - 'macos-13'
           - 'macos-14'
+          - 'macos-15'
         node-version:
+          - '23'
           - '22'
           - '20'
           - '18'
@@ -31,6 +33,8 @@ jobs:
             os: 'macos-latest'
           - node-version: '14'
             os: 'macos-14'
+          - node-version: '14'
+            os: 'macos-15'
     steps:
       # - name: windows
       #   if: ${{ startsWith(matrix.os, 'windows-') }}
@@ -51,4 +55,5 @@ jobs:
       - name: report number of processors
         run: |
           node -e 'console.log(require("os").cpus().length)'
+          node -e 'console.log(process.arch)'
   
